@@ -3,3 +3,5 @@ export { Input } from "./Input";
 export { Alert } from "./Alert";
 export { Modal, ConfirmModal } from "./Modal";
 export { LoadingSpinner } from "./LoadingSpinner";
+export { SearchBar } from "./SearchBar";
+export { MoreOptions } from "./MoreOptions";
