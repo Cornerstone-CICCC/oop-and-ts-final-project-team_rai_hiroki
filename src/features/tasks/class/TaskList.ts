@@ -12,8 +12,20 @@ export class TaskList {
     return [...this.tasks];
   }
 
-  getByStatus(status: TaskStatus): Task[] {
-    return this.tasks.filter((task) => task.status === status);
+  getTasks(keyword: string): Task[] {
+    const normalizedKeyword = keyword.trim().toLowerCase();
+
+    // return all tasks unless search bar is filled
+    if (!normalizedKeyword) {
+      return [...this.tasks];
+    }
+
+    return this.tasks.filter((task) => {
+      const fields = [task.category, task.title, task.content];
+      return fields.some((field) =>
+        field.toLowerCase().includes(normalizedKeyword),
+      );
+    });
   }
 
   add(newTask: Task): void {

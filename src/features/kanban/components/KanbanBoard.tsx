@@ -22,8 +22,11 @@ type TaskModalState = {
 
 export function KanbanBoard() {
   const [taskList] = useState(() => new TaskList(DUMMY_TASKS));
+
+  // to force it rerender when the values in the class changes  
   const [, setRefreshKey] = useState(0);
   const [taskModalState, setTaskModalState] = useState<TaskModalState | null>(null);
+  const [searchKeyword, setSearchKeyword] = useState("");
 
   const refreshBoard = (): void => {
     setRefreshKey((currentValue) => currentValue + 1);
@@ -108,12 +111,21 @@ export function KanbanBoard() {
     }
   };
 
+  const handleSearch = (keyword: string): void => {
+    setSearchKeyword(keyword);
+  };
+
+  const getTasksByFilter = (status: TaskStatus): Task[] => {
+    const tasks = taskList.getTasks(searchKeyword);
+    return tasks.filter((task) => task.status === status);
+  };
+
   return (
     <>
       <div className="flex flex-col min-h-[60vh] md:min-h-[calc(100vh-8rem)] gap-4">
         <section className="bg-white rounded-xl shadow-sm border border-slate-200 text-black overflow-hidden">
           <h2 className="w-full flex items-center px-4 pt-4 text-2xl sm:text-4xl">CICCC Board</h2>
-          <SearchBar />
+          <SearchBar onSearch={handleSearch} />
         </section>
 
         <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -121,7 +133,7 @@ export function KanbanBoard() {
             <KanbanColumn
               key={title}
               title={title}
-              tasks={taskList.getByStatus(title)}
+              tasks={getTasksByFilter(title)}
               onTaskDragStart={handleTaskDragStart}
               onColumnDragOver={handleColumnDragOver}
               onColumnDrop={handleColumnDrop}
