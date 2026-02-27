@@ -101,6 +101,13 @@ export function KanbanBoard() {
     refreshBoard();
   };
 
+  const handleDeleteTask = (taskId: string): void => {
+    const isDeleted = taskList.delete(taskId);
+    if (isDeleted) {
+      refreshBoard();
+    }
+  };
+
   return (
     <>
       <div className="flex flex-col min-h-[60vh] md:min-h-[calc(100vh-8rem)] gap-4">
@@ -120,6 +127,7 @@ export function KanbanBoard() {
               onColumnDrop={handleColumnDrop}
               onAddTaskRequest={openAddModal}
               onUpdateTaskRequest={openUpdateModal}
+              onDeleteTaskRequest={handleDeleteTask}
             />
           ))}
         </section>

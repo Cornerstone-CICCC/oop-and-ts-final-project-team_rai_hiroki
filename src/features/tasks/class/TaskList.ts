@@ -20,6 +20,16 @@ export class TaskList {
     this.tasks.push(newTask);
   }
 
+  delete(taskId: string): boolean {
+    const targetIndex = this.tasks.findIndex((task) => task.id === taskId);
+    if (targetIndex === -1) {
+      return false;
+    }
+
+    this.tasks.splice(targetIndex, 1);
+    return true;
+  }
+
   update(
     taskId: string,
     fields: {

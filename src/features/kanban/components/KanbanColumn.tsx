@@ -13,6 +13,7 @@ type KanbanColumnProps = {
   onColumnDrop: (event: DragEvent<HTMLDivElement>, status: TaskStatus) => void;
   onAddTaskRequest: (status: TaskStatus) => void;
   onUpdateTaskRequest: (task: Task) => void;
+  onDeleteTaskRequest: (taskId: string) => void;
 };
 
 type AddDropZoneProps = {
@@ -45,6 +46,7 @@ export function KanbanColumn(props: KanbanColumnProps) {
     onColumnDrop,
     onAddTaskRequest,
     onUpdateTaskRequest,
+    onDeleteTaskRequest,
   } = props;
 
   return (
@@ -72,6 +74,7 @@ export function KanbanColumn(props: KanbanColumnProps) {
             task={task}
             onDragStart={onTaskDragStart}
             onUpdateRequest={onUpdateTaskRequest}
+            onDeleteRequest={onDeleteTaskRequest}
           />
         ))}
 

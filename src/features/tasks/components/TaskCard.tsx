@@ -8,10 +8,11 @@ type TaskCardProps = {
   task: Task;
   onDragStart: (taskId: string, event: DragEvent<HTMLDivElement>) => void;
   onUpdateRequest: (task: Task) => void;
+  onDeleteRequest: (taskId: string) => void;
 };
 
 export function TaskCard(props: TaskCardProps) {
-  const { task, onDragStart, onUpdateRequest } = props;
+  const { task, onDragStart, onUpdateRequest, onDeleteRequest } = props;
   const [isDetailOpen, setIsDetailOpen] = useState(false);
 
   const openDetail = (): void => {
@@ -22,10 +23,19 @@ export function TaskCard(props: TaskCardProps) {
     setIsDetailOpen(false);
   };
 
+  const confirmDelete = (): void => {
+    const isConfirmed = window.confirm(`Are you sure you want to delete "${task.title}"?`);
+    if (!isConfirmed) {
+      return;
+    }
+
+    onDeleteRequest(task.id);
+  };
+
   const optionItems: MoreOptionsItem[] = [
     { id: "detail", label: "Detail", onClick: openDetail },
     { id: "update", label: "Update", onClick: () => onUpdateRequest(task) },
-    { id: "delete", label: "Delete" },
+    { id: "delete", label: "Delete", onClick: confirmDelete },
   ];
 
   return (
