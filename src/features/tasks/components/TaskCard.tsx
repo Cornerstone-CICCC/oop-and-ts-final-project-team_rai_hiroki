@@ -7,10 +7,11 @@ import { TaskDetail } from "./TaskDetail";
 type TaskCardProps = {
   task: Task;
   onDragStart: (taskId: string, event: DragEvent<HTMLDivElement>) => void;
+  onUpdateRequest: (task: Task) => void;
 };
 
 export function TaskCard(props: TaskCardProps) {
-  const { task, onDragStart } = props;
+  const { task, onDragStart, onUpdateRequest } = props;
   const [isDetailOpen, setIsDetailOpen] = useState(false);
 
   const openDetail = (): void => {
@@ -23,7 +24,7 @@ export function TaskCard(props: TaskCardProps) {
 
   const optionItems: MoreOptionsItem[] = [
     { id: "detail", label: "Detail", onClick: openDetail },
-    { id: "update", label: "Update" },
+    { id: "update", label: "Update", onClick: () => onUpdateRequest(task) },
     { id: "delete", label: "Delete" },
   ];
 

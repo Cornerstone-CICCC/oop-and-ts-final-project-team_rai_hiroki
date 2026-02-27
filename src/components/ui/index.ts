@@ -5,3 +5,6 @@ export { Modal, ConfirmModal } from "./Modal";
 export { LoadingSpinner } from "./LoadingSpinner";
 export { SearchBar } from "./SearchBar";
 export { MoreOptions } from "./MoreOptions";
+export { InputModal } from "./InputModal";
+export { getEmptyTaskInputValues, TASK_COLOR_OPTIONS } from "./inputModalConfig";
+export type { TaskInputValues } from "./inputModalConfig";

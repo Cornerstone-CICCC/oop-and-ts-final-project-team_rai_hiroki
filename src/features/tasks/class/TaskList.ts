@@ -20,6 +20,27 @@ export class TaskList {
     this.tasks.push(newTask);
   }
 
+  update(
+    taskId: string,
+    fields: {
+      categoryColorClassName: string;
+      category: string;
+      title: string;
+      content: string;
+    },
+  ): boolean {
+    const targetTask = this.tasks.find((task) => task.id === taskId);
+    if (!targetTask) {
+      return false;
+    }
+
+    targetTask.categoryColorClassName = fields.categoryColorClassName;
+    targetTask.category = fields.category;
+    targetTask.title = fields.title;
+    targetTask.content = fields.content;
+    return true;
+  }
+
   updateTaskStatus(taskId: string, targetStatus: TaskStatus): boolean {
     const targetTask = this.tasks.find((task) => task.id === taskId);
     if (!targetTask) {
