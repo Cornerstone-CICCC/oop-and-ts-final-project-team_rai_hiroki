@@ -15,3 +15,5 @@ export type Task = {
   assignees: TaskAssignee[];
   status: TaskStatus;
 };
+
+export type TaskDocument = Omit<Task, "id">;
