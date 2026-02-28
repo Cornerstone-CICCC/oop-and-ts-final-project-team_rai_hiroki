@@ -1,13 +1,17 @@
+import { useState } from "react";
 import { LoadingSpinner } from "@/components/ui";
 import { useUserList } from "../hooks";
 import { UserCard } from "./UserCard";
+import { UserDetailModal } from "./UserDetailModal";
+import type { IUser } from "@/types";
 
 /**
  * UserListPage Component
  * Displays a list of all users in the system
  */
 export function UserListPage() {
-  const { users, isLoading, error, refetch } = useUserList();
+  const { users, isLoading, error } = useUserList();
+  const [selectedUser, setSelectedUser] = useState<IUser | null>(null);
 
   if (isLoading) {
     return (
@@ -21,28 +25,16 @@ export function UserListPage() {
     return (
       <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-center">
         <p className="text-red-800">{error}</p>
-        <button
-          onClick={refetch}
-          className="mt-2 text-sm text-red-600 hover:text-red-700 underline"
-        >
-          Try again
-        </button>
       </div>
     );
   }
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
+      <div className="mb-6">
         <h2 className="text-xl font-bold text-slate-900">
           Users ({users.length})
         </h2>
-        <button
-          onClick={refetch}
-          className="text-sm text-slate-500 hover:text-slate-900 transition-colors"
-        >
-          Refresh
-        </button>
       </div>
 
       {users.length === 0 ? (
@@ -50,10 +42,16 @@ export function UserListPage() {
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {users.map((user) => (
-            <UserCard key={user.id} user={user} />
+            <UserCard key={user.id} user={user} onClick={() => setSelectedUser(user)} />
           ))}
         </div>
       )}
+
+      <UserDetailModal
+        user={selectedUser}
+        isOpen={selectedUser !== null}
+        onClose={() => setSelectedUser(null)}
+      />
     </div>
   );
 }

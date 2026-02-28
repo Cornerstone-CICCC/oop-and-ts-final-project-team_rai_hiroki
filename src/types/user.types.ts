@@ -8,6 +8,7 @@ import type { User as FirebaseUser } from "firebase/auth";
 export type UserDocument = {
   email: string;
   displayName: string;
+  bio: string;
   photoURL: string | null;
   createdAt: Timestamp;
   updatedAt: Timestamp;
@@ -22,6 +23,7 @@ export type IUser = {
   id: string;
   email: string;
   displayName: string;
+  bio: string;
   photoURL: string | null;
   createdAt: Date;
   updatedAt: Date;
@@ -65,6 +67,7 @@ export type SignupCredentials = {
  */
 export type UpdateProfileDTO = {
   displayName?: string;
+  bio?: string;
   photoURL?: string | null;
 };
 
