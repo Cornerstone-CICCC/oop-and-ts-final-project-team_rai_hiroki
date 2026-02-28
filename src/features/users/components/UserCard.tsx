@@ -4,15 +4,19 @@ import { UserAvatar } from "./UserAvatar";
 
 type UserCardProps = {
   user: IUser;
+  onClick?: () => void;
 };
 
 /**
  * UserCard Component
  * Displays individual user information in a card format
  */
-export function UserCard({ user }: UserCardProps) {
+export function UserCard({ user, onClick }: UserCardProps) {
   return (
-    <div className="bg-white rounded-lg p-4 border border-slate-200 hover:border-indigo-300 shadow-sm hover:shadow transition-all group">
+    <div
+      onClick={onClick}
+      className="bg-white rounded-lg p-4 border border-slate-200 hover:border-indigo-300 shadow-sm hover:shadow transition-all group cursor-pointer"
+    >
       <div className="flex items-center gap-4">
         <UserAvatar user={user} size="lg" />
         <div className="flex-1 min-w-0">
