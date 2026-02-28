@@ -8,7 +8,7 @@ import type { Firestore } from "firebase/firestore";
 // Firebase configuration for emulator
 // When using Firebase Emulator with 'demo-' prefix project ID,
 // real Firebase credentials are not required
-const firebaseConfig = {
+export const firebaseConfig = {
   apiKey: "demo-api-key",
   authDomain: "demo-kanban.firebaseapp.com",
   projectId: "demo-kanban",
