@@ -22,6 +22,7 @@ type MoreOptionsProps = {
   selectedItemId?: string;
   menuWidth?: string | number;
   maxVisibleItems?: number;
+  closeOnItemClick?: boolean;
 };
 
 export function MoreOptions({
@@ -33,6 +34,7 @@ export function MoreOptions({
   selectedItemId,
   menuWidth = "20ch",
   maxVisibleItems = 6,
+  closeOnItemClick = true,
 }: MoreOptionsProps) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -80,7 +82,9 @@ export function MoreOptions({
             selected={item.id === selectedItemId}
             onClick={() => {
               item.onClick?.();
-              handleClose();
+              if (closeOnItemClick) {
+                handleClose();
+              }
             }}
             className="flex gap-2"
           >

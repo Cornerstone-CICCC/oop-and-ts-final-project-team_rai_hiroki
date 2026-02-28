@@ -49,6 +49,7 @@ export class TaskList {
       category: string;
       title: string;
       content: string;
+      assignees: Task["assignees"];
     },
   ): boolean {
     const targetTask = this.tasks.find((task) => task.id === taskId);
@@ -60,6 +61,7 @@ export class TaskList {
     targetTask.category = fields.category;
     targetTask.title = fields.title;
     targetTask.content = fields.content;
+    targetTask.assignees = [...fields.assignees];
     return true;
   }
 

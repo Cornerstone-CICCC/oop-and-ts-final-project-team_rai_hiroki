@@ -11,7 +11,6 @@ import type { Task, TaskStatus } from "@/types";
 import { KanbanColumn } from "./KanbanColumn";
 
 const COLUMN_TITLES: TaskStatus[] = ["To Do", "In Progress", "Done"];
-const DUMMY_ASSIGNEE = { id: "user-demo", initials: "DM", colorClassName: "bg-indigo-600" };
 
 type TaskModalState = {
   mode: "add" | "update";
@@ -68,6 +67,7 @@ export function KanbanBoard() {
         category: task.category,
         title: task.title,
         content: task.content,
+        assignees: task.assignees,
       },
     });
   };
@@ -88,7 +88,7 @@ export function KanbanBoard() {
         category: values.category.trim(),
         title: values.title.trim(),
         content: values.content.trim(),
-        assignees: [DUMMY_ASSIGNEE],
+        assignees: values.assignees,
         status: taskModalState.status,
       });
     } else if (taskModalState.targetTaskId) {
@@ -97,6 +97,7 @@ export function KanbanBoard() {
         category: values.category.trim(),
         title: values.title.trim(),
         content: values.content.trim(),
+        assignees: values.assignees,
       });
     }
 
