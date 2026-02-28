@@ -97,6 +97,9 @@ export class ProfileService implements IProfileService {
       if (data.displayName !== undefined) {
         updateData.displayName = data.displayName;
       }
+      if (data.bio !== undefined) {
+        updateData.bio = data.bio;
+      }
       if (data.photoURL !== undefined) {
         updateData.photoURL = data.photoURL;
       }
@@ -139,6 +142,7 @@ export class ProfileService implements IProfileService {
       id: userId,
       email: data.email,
       displayName: data.displayName,
+      bio: data.bio ?? "",
       photoURL: data.photoURL,
       createdAt: this.timestampToDate(data.createdAt),
       updatedAt: this.timestampToDate(data.updatedAt),

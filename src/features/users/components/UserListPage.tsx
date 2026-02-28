@@ -1,6 +1,9 @@
+import { useState } from "react";
 import { LoadingSpinner } from "@/components/ui";
 import { useUserList } from "../hooks";
 import { UserCard } from "./UserCard";
+import { UserDetailModal } from "./UserDetailModal";
+import type { IUser } from "@/types";
 
 /**
  * UserListPage Component
@@ -8,6 +11,7 @@ import { UserCard } from "./UserCard";
  */
 export function UserListPage() {
   const { users, isLoading, error } = useUserList();
+  const [selectedUser, setSelectedUser] = useState<IUser | null>(null);
 
   if (isLoading) {
     return (
@@ -38,10 +42,16 @@ export function UserListPage() {
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {users.map((user) => (
-            <UserCard key={user.id} user={user} />
+            <UserCard key={user.id} user={user} onClick={() => setSelectedUser(user)} />
           ))}
         </div>
       )}
+
+      <UserDetailModal
+        user={selectedUser}
+        isOpen={selectedUser !== null}
+        onClose={() => setSelectedUser(null)}
+      />
     </div>
   );
 }

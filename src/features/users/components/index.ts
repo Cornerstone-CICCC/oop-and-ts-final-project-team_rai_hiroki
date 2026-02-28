@@ -6,4 +6,5 @@ export { AuthPage } from "./AuthPage";
 export { UserAvatar } from "./UserAvatar";
 export { UserMenu } from "./UserMenu";
 export { UserCard } from "./UserCard";
+export { UserDetailModal } from "./UserDetailModal";
 export { UserListPage } from "./UserListPage";
