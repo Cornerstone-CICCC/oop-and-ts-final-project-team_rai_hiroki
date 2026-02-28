@@ -7,7 +7,7 @@ import { UserCard } from "./UserCard";
  * Displays a list of all users in the system
  */
 export function UserListPage() {
-  const { users, isLoading, error, refetch } = useUserList();
+  const { users, isLoading, error } = useUserList();
 
   if (isLoading) {
     return (
@@ -21,28 +21,16 @@ export function UserListPage() {
     return (
       <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-center">
         <p className="text-red-800">{error}</p>
-        <button
-          onClick={refetch}
-          className="mt-2 text-sm text-red-600 hover:text-red-700 underline"
-        >
-          Try again
-        </button>
       </div>
     );
   }
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
+      <div className="mb-6">
         <h2 className="text-xl font-bold text-slate-900">
           Users ({users.length})
         </h2>
-        <button
-          onClick={refetch}
-          className="text-sm text-slate-500 hover:text-slate-900 transition-colors"
-        >
-          Refresh
-        </button>
       </div>
 
       {users.length === 0 ? (

@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { UserMenu } from "@/features/users";
 import { cn } from "@/utils";
 
@@ -10,8 +9,6 @@ type HeaderProps = {
 };
 
 export function Header({ currentPage, onNavigate }: HeaderProps) {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
   const navButtonClass = (page: Page) =>
     cn(
       "px-3 py-1.5 rounded-md text-sm font-medium transition-all",
@@ -39,51 +36,8 @@ export function Header({ currentPage, onNavigate }: HeaderProps) {
           </nav>
         </div>
 
-        <div className="flex items-center gap-3">
-          <UserMenu />
-
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-2 -m-2 text-slate-600 hover:text-slate-900"
-            aria-label="Toggle menu"
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              {isMobileMenuOpen ? (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              ) : (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              )}
-            </svg>
-          </button>
-        </div>
+        <UserMenu />
       </div>
-
-      {/* Mobile Navigation */}
-      {isMobileMenuOpen && (
-        <nav className="md:hidden border-t border-slate-200 bg-white/95 backdrop-blur-md px-4 py-2">
-          <div className="flex flex-col gap-1">
-            <button
-              onClick={() => {
-                onNavigate("kanban");
-                setIsMobileMenuOpen(false);
-              }}
-              className={cn(navButtonClass("kanban"), "w-full text-left")}
-            >
-              Board
-            </button>
-            <button
-              onClick={() => {
-                onNavigate("users");
-                setIsMobileMenuOpen(false);
-              }}
-              className={cn(navButtonClass("users"), "w-full text-left")}
-            >
-              Users
-            </button>
-          </div>
-        </nav>
-      )}
     </header>
   );
 }
