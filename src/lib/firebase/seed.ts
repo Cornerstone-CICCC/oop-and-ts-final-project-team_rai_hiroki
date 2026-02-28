@@ -3,6 +3,7 @@ import {
   getAuth,
   connectAuthEmulator,
   createUserWithEmailAndPassword,
+  signOut,
 } from "firebase/auth";
 import {
   getFirestore,
@@ -87,6 +88,7 @@ export async function seedDummyData(): Promise<void> {
   } catch (error) {
     console.warn("[Seed] Failed to seed dummy data:", error);
   } finally {
+    await signOut(seedAuth);
     await deleteApp(seedApp);
   }
 }
