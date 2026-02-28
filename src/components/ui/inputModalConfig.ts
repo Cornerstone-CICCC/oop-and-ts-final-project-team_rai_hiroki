@@ -1,8 +1,11 @@
+import type { TaskAssignee } from "@/types";
+
 export type TaskInputValues = {
   color: string;
   category: string;
   title: string;
   content: string;
+  assignees: TaskAssignee[];
 };
 
 export const TASK_COLOR_OPTIONS = [
@@ -19,5 +22,6 @@ export function getEmptyTaskInputValues(): TaskInputValues {
     category: "",
     title: "",
     content: "",
+    assignees: [],
   };
 }

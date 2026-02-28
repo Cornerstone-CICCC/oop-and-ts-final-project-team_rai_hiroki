@@ -12,8 +12,20 @@ export class TaskList {
     return [...this.tasks];
   }
 
-  getByStatus(status: TaskStatus): Task[] {
-    return this.tasks.filter((task) => task.status === status);
+  getTasks(keyword: string): Task[] {
+    const normalizedKeyword = keyword.trim().toLowerCase();
+
+    // return all tasks unless search bar is filled
+    if (!normalizedKeyword) {
+      return [...this.tasks];
+    }
+
+    return this.tasks.filter((task) => {
+      const fields = [task.category, task.title, task.content];
+      return fields.some((field) =>
+        field.toLowerCase().includes(normalizedKeyword),
+      );
+    });
   }
 
   add(newTask: Task): void {
@@ -37,6 +49,7 @@ export class TaskList {
       category: string;
       title: string;
       content: string;
+      assignees: Task["assignees"];
     },
   ): boolean {
     const targetTask = this.tasks.find((task) => task.id === taskId);
@@ -48,6 +61,7 @@ export class TaskList {
     targetTask.category = fields.category;
     targetTask.title = fields.title;
     targetTask.content = fields.content;
+    targetTask.assignees = [...fields.assignees];
     return true;
   }
 

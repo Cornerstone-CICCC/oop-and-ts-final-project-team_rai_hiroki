@@ -6,13 +6,17 @@ import HelpIcon from "@mui/icons-material/Help";
 import { IconButton, Input } from "@mui/material";
 import { MoreOptions } from "./MoreOptions";
 
-export function SearchBar() {
+type SearchBarProps = {
+  onSearch: (keyword: string) => void;
+};
+
+export function SearchBar(props: SearchBarProps) {
+  const { onSearch } = props;
   const iconSize = 36;
   const [inputValue, setInputValue] = useState<string>("");
 
   const handleSearch = () => {
-    console.log(inputValue);
-    setInputValue("")
+    onSearch(inputValue);
   };
 
   const mobileMenuItems = [
