@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import type { IUser } from "@/types";
-import { userService } from "@/services/UserService";
+import { useProfileService } from "@/services";
 
 type UseUserListReturn = {
   users: IUser[];
@@ -11,32 +11,35 @@ type UseUserListReturn = {
 
 /**
  * useUserList Hook
- * Fetches and manages the list of all users
+ * Subscribes to and manages the real-time list of all users
  */
 export function useUserList(): UseUserListReturn {
   const [users, setUsers] = useState<IUser[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  const fetchUsers = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const allUsers = await userService.getAllUsers();
-      setUsers(allUsers);
-    } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "Failed to fetch users";
-      setError(message);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+  const profileService = useProfileService();
 
   useEffect(() => {
-    fetchUsers();
-  }, [fetchUsers]);
+    const unsubscribe = profileService.observeAllProfiles(
+      (allUsers) => {
+        setUsers(allUsers);
+        setIsLoading(false);
+      },
+      (err) => {
+        setError(err.message);
+        setIsLoading(false);
+      },
+    );
 
-  return { users, isLoading, error, refetch: fetchUsers };
+    return () => unsubscribe();
+  }, [profileService]);
+
+  // Keep refetch for interface compatibility, though it's not strictly necessary with real-time updates
+  const refetch = async () => {
+    // Real-time listener handles updates, so this could just be a no-op
+    // But we could force a re-subscription if really needed.
+    // For now, it's a no-op.
+  };
+
+  return { users, isLoading, error, refetch };
 }

@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { useState, useEffect, type FormEvent } from "react";
 import { useAuth } from "@/hooks";
 import { Modal, Input, Button, Alert } from "@/components/ui";
 
@@ -9,22 +9,37 @@ type EditProfileModalProps = {
 
 /**
  * EditProfileModal Component
- * Modal for editing user profile (display name and photo URL)
+ * Modal for editing user profile (display name, bio, and photo URL)
  */
 export function EditProfileModal({ isOpen, onClose }: EditProfileModalProps) {
   const { user, updateProfile, isLoading, error, clearError } = useAuth();
 
   const [displayName, setDisplayName] = useState(user?.displayName || "");
+  const [bio, setBio] = useState(user?.bio || "");
   const [photoURL, setPhotoURL] = useState(user?.photoURL || "");
   const [localError, setLocalError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Reset form values and submitting state when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      setDisplayName(user?.displayName || "");
+      setBio(user?.bio || "");
+      setPhotoURL(user?.photoURL || "");
+      setLocalError(null);
+      setIsSubmitting(false);
+      clearError();
+    }
+  }, [isOpen]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setLocalError(null);
     clearError();
 
-    if (!displayName.trim()) {
+    const safeDisplayName = (displayName ?? "").trim();
+
+    if (!safeDisplayName) {
       setLocalError("Display name is required");
       return;
     }
@@ -33,8 +48,9 @@ export function EditProfileModal({ isOpen, onClose }: EditProfileModalProps) {
 
     try {
       await updateProfile({
-        displayName: displayName.trim(),
-        photoURL: photoURL.trim() || null,
+        displayName: safeDisplayName,
+        bio: (bio ?? "").trim(),
+        photoURL: (photoURL ?? "").trim() || null,
       });
       onClose();
     } catch {
@@ -57,6 +73,16 @@ export function EditProfileModal({ isOpen, onClose }: EditProfileModalProps) {
           value={displayName}
           onChange={(e) => setDisplayName(e.target.value)}
           placeholder="Your name"
+          disabled={isDisabled}
+        />
+
+        <Input
+          label="Bio (optional)"
+          type="text"
+          id="editBio"
+          value={bio}
+          onChange={(e) => setBio(e.target.value)}
+          placeholder="Tell us about yourself"
           disabled={isDisabled}
         />
 

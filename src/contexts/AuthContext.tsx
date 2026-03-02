@@ -48,29 +48,46 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   // Listen to Firebase Auth state changes
   useEffect(() => {
+    let profileUnsubscribe: (() => void) | null = null;
+
     const unsubscribe = authService.onAuthStateChanged(
-      async (firebaseUser: FirebaseUser | null) => {
+      (firebaseUser: FirebaseUser | null) => {
+        // Clear previous profile listener if any
+        if (profileUnsubscribe) {
+          profileUnsubscribe();
+          profileUnsubscribe = null;
+        }
+
         if (firebaseUser) {
-          try {
-            const user = await profileService.getProfile(firebaseUser.uid);
-            dispatch({
-              type: "AUTH_SUCCESS",
-              payload: { user, firebaseUser },
-            });
-          } catch (error) {
-            console.error("Failed to load user profile:", error);
-            dispatch({
-              type: "AUTH_ERROR",
-              payload: "Failed to load user profile",
-            });
-          }
+          // Setup real-time listener for current user's profile
+          profileUnsubscribe = profileService.observeProfile(
+            firebaseUser.uid,
+            (user) => {
+              dispatch({
+                type: "AUTH_SUCCESS",
+                payload: { user, firebaseUser },
+              });
+            },
+            (error) => {
+              console.error("Failed to load user profile:", error);
+              dispatch({
+                type: "AUTH_ERROR",
+                payload: "Failed to load user profile",
+              });
+            }
+          );
         } else {
           dispatch({ type: "SIGN_OUT" });
         }
       }
     );
 
-    return () => unsubscribe();
+    return () => {
+      unsubscribe();
+      if (profileUnsubscribe) {
+        profileUnsubscribe();
+      }
+    };
   }, [authService, profileService]);
 
   const signIn = useCallback(

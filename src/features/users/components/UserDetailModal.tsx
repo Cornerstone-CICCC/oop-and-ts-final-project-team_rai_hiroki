@@ -28,8 +28,10 @@ export function UserDetailModal({
 
   const handleEdit = () => {
     if (!user) return;
-    setDisplayName(user.displayName);
-    setBio(user.bio);
+    // Use currentUser for own profile to pre-fill with the latest saved values
+    const source = isOwnProfile && currentUser ? currentUser : user;
+    setDisplayName(source.displayName ?? "");
+    setBio(source.bio ?? "");
     setLocalError(null);
     clearError();
     setIsEditing(true);
@@ -52,7 +54,9 @@ export function UserDetailModal({
     setLocalError(null);
     clearError();
 
-    if (!displayName.trim()) {
+    const safeDisplayName = (displayName ?? "").trim();
+
+    if (!safeDisplayName) {
       setLocalError("Display name is required");
       return;
     }
@@ -60,8 +64,8 @@ export function UserDetailModal({
     setIsSubmitting(true);
     try {
       await updateProfile({
-        displayName: displayName.trim(),
-        bio: bio.trim(),
+        displayName: safeDisplayName,
+        bio: (bio ?? "").trim(),
       });
       setIsEditing(false);
     } catch {
@@ -72,6 +76,8 @@ export function UserDetailModal({
   };
 
   if (!user) return null;
+
+  const viewUser = isOwnProfile && currentUser ? currentUser : user;
 
   const displayError = localError || error;
 
@@ -131,12 +137,12 @@ export function UserDetailModal({
       ) : (
         <div className="space-y-4">
           <div className="flex items-center gap-4">
-            <UserAvatar user={user} size="lg" />
+            <UserAvatar user={viewUser} size="lg" />
             <div className="flex-1 min-w-0">
               <h3 className="text-lg font-semibold text-slate-900 truncate">
-                {user.displayName}
+                {viewUser.displayName}
               </h3>
-              <p className="text-slate-500 text-sm truncate">{user.email}</p>
+              <p className="text-slate-500 text-sm truncate">{viewUser.email}</p>
             </div>
           </div>
 
@@ -145,7 +151,7 @@ export function UserDetailModal({
               Bio
             </span>
             <p className="text-slate-600 text-sm whitespace-pre-wrap">
-              {user.bio || "No bio yet."}
+              {viewUser.bio || "No bio yet."}
             </p>
           </div>
 
@@ -153,13 +159,13 @@ export function UserDetailModal({
             <div>
               <span className="block text-slate-400 text-xs">Joined</span>
               <span className="text-slate-600">
-                {formatDateShort(user.createdAt)}
+                {formatDateShort(viewUser.createdAt)}
               </span>
             </div>
             <div>
               <span className="block text-slate-400 text-xs">Last Login</span>
               <span className="text-slate-600">
-                {formatDateShort(user.lastLoginAt)}
+                {formatDateShort(viewUser.lastLoginAt)}
               </span>
             </div>
           </div>
