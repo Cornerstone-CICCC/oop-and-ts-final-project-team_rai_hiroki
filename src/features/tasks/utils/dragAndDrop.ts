@@ -1,6 +1,10 @@
 const TASK_ID_DATA_KEY = "text/plain";
 
-export function setDraggedTaskId(dataTransfer: DataTransfer | null, taskId: string): void {
+// put ID of the task that was dragged
+export function setDraggedTaskId(
+  dataTransfer: DataTransfer | null,
+  taskId: string,
+): void {
   if (!dataTransfer) {
     return;
   }
@@ -9,6 +13,7 @@ export function setDraggedTaskId(dataTransfer: DataTransfer | null, taskId: stri
   dataTransfer.effectAllowed = "move";
 }
 
+// return ID of the task that was dropped
 export function getDraggedTaskId(dataTransfer: DataTransfer | null): string {
   if (!dataTransfer) {
     return "";
