@@ -59,6 +59,9 @@ export function UserProfile() {
               {user.displayName}
             </h2>
             <p className="text-slate-500">{user.email}</p>
+            {user.bio && (
+              <p className="text-sm text-slate-600 mt-1">{user.bio}</p>
+            )}
           </div>
         </div>
 

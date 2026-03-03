@@ -11,6 +11,7 @@ import {
   deleteDoc,
   collection,
   serverTimestamp,
+  onSnapshot,
 } from "firebase/firestore";
 import type { Firestore, Timestamp } from "firebase/firestore";
 import type { IUser, UpdateProfileDTO, UserDocument } from "@/types";
@@ -59,10 +60,10 @@ export class ProfileService implements IProfileService {
   async getAllProfiles(): Promise<IUser[]> {
     try {
       const querySnapshot = await getDocs(
-        collection(this.db, this.usersCollection)
+        collection(this.db, this.usersCollection),
       );
       return querySnapshot.docs.map((doc) =>
-        this.convertDocumentToUser(doc.id, doc.data() as UserDocument)
+        this.convertDocumentToUser(doc.id, doc.data() as UserDocument),
       );
     } catch (error) {
       if (error instanceof AppError) {
@@ -81,15 +82,10 @@ export class ProfileService implements IProfileService {
     }
 
     try {
-      // Update Firebase Auth profile if displayName is provided
-      if (data.displayName) {
-        await firebaseUpdateProfile(currentUser, {
-          displayName: data.displayName,
-          photoURL: data.photoURL ?? currentUser.photoURL,
-        });
-      }
-
-      // Update Firestore profile
+      // Update Firestore profile first to avoid race condition:
+      // firebaseUpdateProfile can trigger onAuthStateChanged which re-fetches
+      // the profile. Updating Firestore first ensures the listener always
+      // reads fresh data regardless of timing.
       const updateData: Record<string, unknown> = {
         updatedAt: serverTimestamp(),
       };
@@ -105,6 +101,15 @@ export class ProfileService implements IProfileService {
       }
 
       await updateDoc(doc(this.db, this.usersCollection, userId), updateData);
+
+      // Update Firebase Auth profile after Firestore so any auth state
+      // listener re-fetch will see the already-updated Firestore document.
+      if (data.displayName) {
+        await firebaseUpdateProfile(currentUser, {
+          displayName: data.displayName,
+          photoURL: (data.photoURL ?? currentUser.photoURL) ?? undefined,
+        });
+      }
 
       return this.getProfile(userId);
     } catch (error) {
@@ -135,6 +140,50 @@ export class ProfileService implements IProfileService {
       }
       throw new NetworkError("Failed to delete account", error);
     }
+  }
+
+  observeProfile(
+    userId: string,
+    onNext: (user: IUser) => void,
+    onError?: (error: Error) => void,
+  ): () => void {
+    const docRef = doc(this.db, this.usersCollection, userId);
+    return onSnapshot(
+      docRef,
+      (docSnap) => {
+        if (docSnap.exists()) {
+          onNext(
+            this.convertDocumentToUser(userId, docSnap.data() as UserDocument),
+          );
+        } else {
+          if (onError) onError(new NotFoundError("User profile", userId));
+        }
+      },
+      (error) => {
+        if (onError)
+          onError(new NetworkError("Failed to observe user profile", error));
+      },
+    );
+  }
+
+  observeAllProfiles(
+    onNext: (users: IUser[]) => void,
+    onError?: (error: Error) => void,
+  ): () => void {
+    const colRef = collection(this.db, this.usersCollection);
+    return onSnapshot(
+      colRef,
+      (querySnapshot) => {
+        const users = querySnapshot.docs.map((doc) =>
+          this.convertDocumentToUser(doc.id, doc.data() as UserDocument),
+        );
+        onNext(users);
+      },
+      (error) => {
+        if (onError)
+          onError(new NetworkError("Failed to observe user profiles", error));
+      },
+    );
   }
 
   private convertDocumentToUser(userId: string, data: UserDocument): IUser {
